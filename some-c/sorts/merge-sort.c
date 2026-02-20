@@ -1,77 +1,63 @@
 #include <stdio.h>
 
-int merge_sort(int arr[]);
-int merge(int left[], int right[], int left_size, int right_size);
+int merge_sort(int arr[], int left, int right);
+void merge(int arr[], int left, int middle, int right);
 
-int main(void)
-{
-  int arr[] = {1, 7, 5, 4, 8, 2, 4, 6};
+int main(void) {
+	int arr[] = { 1,7,5,4,8,2,4,6 };
 
-  printf(merge_sort(arr));
+	int size = sizeof(arr) / sizeof(arr[0]);
+	merge_sort(arr, 0, size - 1);
+
+	for (int i = 0; i < size; ++i) {
+		printf("%i ", arr[i]);
+	}
 }
 
-int merge(int left[], int right[], int left_size, int right_size)
-{
-  int i = 0;
-  int j = 0;
-  int k = 0;
+void merge(int arr[], int left, int middle, int right) {
+	int n1 = middle - left + 1;
+	int n2 = right - middle;
 
-  int result[] = {};
+	int l[n1];
+  int r[n2];
 
-  while (i < left_size && j < right_size)
-  {
-    if (left[i] < right[j])
-    {
-      result[k] = left[i];
-      k++;
-      i++;
-    }
-    else if (left[i] > right[j])
-    {
-      result[k] = right[j];
-      k++;
-      j++;
-    }
-    else if (left[i] == right[j])
-    {
-      result[k] = left[i];
-      result[k + 1] = right[j];
+	for (int i = 0; i < n1; ++i) l[i] = arr[left + i];
+	for (int i = 0; i < n2; ++i) r[i] = arr[middle + 1 + i];
 
-      i++;
-      j++;
-      k += 2;
-    }
-  }
+	int i = 0, j = 0, k = left;
 
-  return result;
+	while (i < n1 && j < n2) {
+		if (l[i] <= r[j]) {
+			arr[k] = l[i];
+			i ++;
+		} else {
+			arr[k] = r[j];
+			j++;
+		}
+
+		k++;
+	}
+
+	while (i < n1) {
+		arr[k] = l[i];
+		i ++;
+		k ++;
+	}
+
+	while (j < n2) {
+		arr[k] = r[j];
+		j ++;
+		k ++;
+	}
 }
 
-int merge_sort(int arr[])
-{
-  const int size = sizeof(arr);
+int merge_sort(int arr[], int left, int right) {
+	if (left < right) {
+		int middle = left + (right - left) / 2;
 
-  if (size <= 1)
-  {
-    return arr;
-  }
-  else
-  {
-    int middle = size / 2;
-    int left[] = {};
-    int right[] = {};
+		merge_sort(arr, left, middle);
+		merge_sort(arr, middle + 1, right);
 
-    for (int i = 0; i < middle; ++i)
-    {
-      left[i] = arr[i];
-      right[i] = arr[i + middle];
-    };
-
-    const int left_size = sizeof(left);
-    const int right_size = sizeof(right);
-
-    int sorted_left[] = merge_sort(left);
-    int sorted_right[] = merge_sort(right);
-
-    return merge(sorted_left, sorted_right, left_size, right_size);
-  }
+		merge(arr, left, middle, right);
+	}
 }
