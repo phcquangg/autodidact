@@ -1,1 +1,1 @@
-AI journey getting started
+AI journey
