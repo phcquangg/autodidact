@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C by Doing - Learning Exercises</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Space+Grotesk:wght@300;400;600&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'IBM Plex Mono', monospace;
+      background: #0a0a0f;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .header {
+      margin-bottom: 2.5rem;
+    }
+
+    .header-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: #64748b;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin: 0 0 1.5rem;
+      line-height: 1.6;
+    }
+
+    .progress-bar-container {
+      background: #1e293b;
+      border-radius: 4px;
+      height: 6px;
+      overflow: hidden;
+      margin-bottom: 0.4rem;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #00ff9d, #a78bfa);
+      transition: width 0.4s ease;
+    }
+
+    .progress-text {
+      font-size: 0.72rem;
+      color: #64748b;
+    }
+
+    .part {
+      margin: 0 auto 3rem;
+    }
+
+    .part-header {
+      border-left: 3px solid;
+      padding-left: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .part-done {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
+
+    .part-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .part-subtitle {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .cards {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .card {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #1e293b;
+      transition: all 0.2s ease;
+    }
+
+    .card.done {
+      background: #0f1a14;
+    }
+
+    .card:not(.done) {
+      background: #111827;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+    }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      border: 2px solid #334155;
+      background: transparent;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .checkbox.checked {
+      border-color: #00ff9d;
+      background: #00ff9d;
+    }
+
+    .card.done .checkbox {
+      border-color: #00ff9d;
+      background: #00ff9d;
+    }
+
+    .checkbox svg {
+      stroke: #0a0a0f;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .card-index {
+      font-size: 0.65rem;
+      color: #475569;
+      flex-shrink: 0;
+      width: 22px;
+    }
+
+    .card-title {
+      flex: 1;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: #e2e8f0;
+    }
+
+    .card.done .card-title {
+      color: #64748b;
+      text-decoration: line-through;
+      text-decoration-color: #475569;
+    }
+
+    .expand-arrow {
+      color: #475569;
+      font-size: 0.7rem;
+      transition: transform 0.2s;
+    }
+
+    .expand-arrow.open {
+      transform: rotate(180deg);
+    }
+
+    .card-content {
+      padding: 0 1rem 1rem 3.5rem;
+      border-top: 1px solid #1e293b;
+      display: none;
+    }
+
+    .card-content.open {
+      display: block;
+    }
+
+    .card-description {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      line-height: 1.7;
+      margin: 0.8rem 0 0.75rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .tag {
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid;
+      letter-spacing: 0.05em;
+    }
+
+    .footer {
+      max-width: 760px;
+      margin: 0 auto;
+      font-size: 0.72rem;
+      color: #334155;
+      text-align: center;
+      padding-bottom: 2rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-label">C LEARNING EXERCISES // JS → EMBEDDED LINUX TRACK</div>
+      <h1>C by Doing</h1>
+      <p class="subtitle">
+        Research-first exercises. Each one has a thing to build and a list of
+        things to look up. No hand-holding.
+      </p>
+
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="progress-text" id="progressText">0 / 0 completed</div>
+    </div>
+
+    <div id="partsContainer"></div>
+  </div>
+
+  <div class="footer">
+    click a card to expand · click the checkbox to mark done
+  </div>
+
+  <script>
+    const exercises = {
+      part1: {
+        title: "Part I — The Language Itself",
+        subtitle: "Core C from a JS dev's perspective",
+        color: "#00ff9d",
+        accent: "#003d26",
+        items: [
+          {
+            id: "p1-01",
+            title: "Hello, Manual Memory",
+            desc: "Write a program that declares an int, a float, a char, and a pointer to each. Print their values AND their memory addresses. Research: sizeof(), format specifiers (%d, %f, %c, %p), stack vs heap.",
+            tags: ["pointers", "types", "printf"],
+          },
+          {
+            id: "p1-02",
+            title: "The Stack Doesn't Lie",
+            desc: "Write a function that returns a local variable by value vs by pointer. Try returning a pointer to a local variable — observe what happens. Research: stack frames, undefined behavior, why JS doesn't have this problem.",
+            tags: ["stack", "pointers", "UB"],
+          },
+          {
+            id: "p1-03",
+            title: "malloc & free: Your New Best Friends",
+            desc: "Dynamically allocate an array of 10 ints on the heap, fill it with squares (1, 4, 9...), print it, then free it. Then: deliberately forget to free it. Research: malloc, calloc, realloc, free, memory leaks, valgrind.",
+            tags: ["heap", "malloc", "memory"],
+          },
+          {
+            id: "p1-04",
+            title: "Pointer Arithmetic Safari",
+            desc: "Create an array of 5 ints. Access elements using pointer arithmetic (*(arr+i)) instead of arr[i]. Prove they're identical. Then: try going out of bounds and observe behavior. Research: why arrays decay to pointers in C.",
+            tags: ["pointers", "arrays", "arithmetic"],
+          },
+          {
+            id: "p1-05",
+            title: "Strings Are Just Char Arrays",
+            desc: "Implement your own versions of strlen(), strcpy(), and strcat() without using <string.h>. Research: null terminator '\\0', why C strings are dangerous, buffer overflows.",
+            tags: ["strings", "arrays", "stdlib"],
+          },
+          {
+            id: "p1-06",
+            title: "Structs: C's Objects",
+            desc: "Model a simple 'sensor reading' as a struct with fields: id (int), value (float), timestamp (long). Write functions to create one on the heap, print it, and free it. Research: struct padding, typedef, struct vs class.",
+            tags: ["structs", "typedef", "memory"],
+          },
+          {
+            id: "p1-07",
+            title: "Enums & Bitfields",
+            desc: "Define an enum for device states (IDLE, RUNNING, ERROR, SLEEP). Use a switch statement to print a message per state. Then: pack multiple boolean flags into a single uint8_t using bitwise ops. Research: bit masking, |=, &=, ~.",
+            tags: ["enums", "bitwise", "flags"],
+          },
+          {
+            id: "p1-08",
+            title: "Functions as First-Class (Sort Of)",
+            desc: "Write a sort function that takes an int array and a comparator function pointer. Use it to sort ascending, then descending, without changing the sort logic. Research: function pointers syntax, callbacks in C.",
+            tags: ["function pointers", "callbacks"],
+          },
+          {
+            id: "p1-09",
+            title: "The Preprocessor Is a Different Beast",
+            desc: "Write macros for MIN(a,b), MAX(a,b), and ARRAY_LEN(arr). Find a case where a naive macro breaks (hint: side effects). Research: #define, #ifdef, include guards, why macros are dangerous.",
+            tags: ["macros", "preprocessor"],
+          },
+          {
+            id: "p1-10",
+            title: "Build a Linked List",
+            desc: "Implement a singly linked list: node struct, insert_front(), insert_back(), delete_node(), print_list(), free_list(). No helper libraries. Research: recursive free, NULL checks, common linked list bugs.",
+            tags: ["data structures", "pointers", "malloc"],
+          },
+          {
+            id: "p1-11",
+            title: "File I/O: Read a Config",
+            desc: "Write a program that reads a .txt config file with key=value pairs (e.g. baud_rate=9600) and stores them in a struct. Research: fopen, fgets, sscanf, fclose, error handling with errno.",
+            tags: ["file I/O", "parsing", "errno"],
+          },
+          {
+            id: "p1-12",
+            title: "Static & Volatile: The Quiet Keywords",
+            desc: "Write a counter function that uses a static local variable to persist its count between calls. Then declare a volatile int and research why volatile matters in embedded contexts (even if you can't fully test it yet). Research: static storage duration, volatile and compiler optimizations.",
+            tags: ["static", "volatile", "scope"],
+          },
+        ],
+      },
+      part2: {
+        title: "Part II — Embedded & Hardware",
+        subtitle: "Where C gets its real personality",
+        color: "#ff6b35",
+        accent: "#3d1500",
+        items: [
+          {
+            id: "p2-01",
+            title: "Blink Without Arduino.h",
+            desc: "On your RPi4 or BeagleBone, blink an LED by writing directly to GPIO registers — no library, no abstraction. Research: memory-mapped I/O, /dev/mem or /sys/class/gpio, mmap(), why embedded C skips the OS abstractions.",
+            tags: ["GPIO", "registers", "mmap"],
+          },
+          {
+            id: "p2-02",
+            title: "Read a Datasheet",
+            desc: "Pick any cheap sensor (DHT11, HC-SR04, or a button). Find its datasheet. Write C code to read it by manually driving the protocol (bit-banging). No driver libraries. Research: timing constraints, busy-wait loops, nanosleep().",
+            tags: ["sensors", "protocols", "datasheet"],
+          },
+          {
+            id: "p2-03",
+            title: "UART: Talk to Something",
+            desc: "Open a serial (UART) port in C, configure it (baud rate, parity, stop bits) using termios, send a string, and read back a response (use your phone with a serial terminal app). Research: termios struct, canonical vs raw mode, read() blocking behavior.",
+            tags: ["UART", "serial", "termios"],
+          },
+          {
+            id: "p2-04",
+            title: "I2C Without a Library",
+            desc: "Connect an I2C device (MPU6050 IMU or SSD1306 OLED are cheap). Write a C program using the Linux i2c-dev interface (/dev/i2c-N) to read a register directly. Research: i2c_smbus_read_byte_data, ioctl, I2C protocol basics.",
+            tags: ["I2C", "ioctl", "i2c-dev"],
+          },
+          {
+            id: "p2-05",
+            title: "SPI: Faster, Dumber",
+            desc: "Connect an SPI device (MAX31855 thermocouple or a SPI flash chip). Read data using the Linux spidev interface. Compare the experience to I2C. Research: SPI modes (CPOL/CPHA), full-duplex transfers, struct spi_ioc_transfer.",
+            tags: ["SPI", "spidev", "protocols"],
+          },
+          {
+            id: "p2-06",
+            title: "Write a Kernel Module (Hello World)",
+            desc: "Write, compile, and load a basic Linux kernel module that prints to dmesg on load and unload. Research: module_init, module_exit, printk, insmod, rmmod, Makefile for out-of-tree modules.",
+            tags: ["kernel", "modules", "LKM"],
+          },
+          {
+            id: "p2-07",
+            title: "A Character Device Driver",
+            desc: "Extend your kernel module into a character device that userspace can open, read from, and write to via /dev/mydevice. Research: file_operations struct, copy_to_user, copy_from_user, register_chrdev.",
+            tags: ["char device", "kernel", "file_operations"],
+          },
+          {
+            id: "p2-08",
+            title: "Interrupts: Stop Polling",
+            desc: "Rewrite your GPIO button reader to use an interrupt instead of a polling loop. In kernel space, or userspace via epoll on a GPIO value file. Research: request_irq, IRQ handler constraints, interrupt latency, the problem with sleeping in interrupt context.",
+            tags: ["interrupts", "IRQ", "epoll"],
+          },
+          {
+            id: "p2-09",
+            title: "Memory: Userspace vs Kernelspace",
+            desc: "Write a program that allocates memory in userspace, then research how it would differ in kernelspace. Experiment with mmap() to map a file into memory and modify it. Research: virtual memory, kmalloc vs vmalloc, page size.",
+            tags: ["memory", "mmap", "virtual memory"],
+          },
+          {
+            id: "p2-10",
+            title: "The Device Tree",
+            desc: "Read the device tree on your board (/proc/device-tree or dtc -I fs). Find the node for a peripheral you've used. Write a simple DTS overlay. Research: Device Tree syntax, compatible strings, how the kernel uses DT to find drivers.",
+            tags: ["device tree", "DTS", "kernel"],
+          },
+          {
+            id: "p2-11",
+            title: "Build a Tiny Sensor Daemon",
+            desc: "Write a C daemon that reads a sensor every N seconds, writes readings to a log file, handles SIGTERM for clean shutdown, and survives a crash (restart logic or systemd watchdog). Research: fork, daemon(), signal(), sigaction, systemd service units.",
+            tags: ["daemon", "signals", "systemd"],
+          },
+          {
+            id: "p2-12",
+            title: "Cross-Compile It",
+            desc: "Set up a cross-compilation toolchain on your host machine. Compile a simple C program for ARM (your target board) from your x86 host. Transfer and run it. Research: gcc cross toolchain, arm-linux-gnueabihf-gcc, sysroot, why this matters for Yocto.",
+            tags: ["cross-compile", "toolchain", "ARM"],
+          },
+        ],
+      },
+      part3: {
+        title: "Part III — Side Quests",
+        subtitle: "Stuff that'll save you later",
+        color: "#a78bfa",
+        accent: "#1e0a3d",
+        items: [
+          {
+            id: "p3-01",
+            title: "Learn GDB Like Your Life Depends on It",
+            desc: "Take any program you've written that has a bug (or introduce one). Debug it using only GDB: set breakpoints, step through, inspect memory with x/, watch variables. Never use printf-debugging again. Research: gdb commands, core dumps, backtrace.",
+            tags: ["debugging", "gdb", "tools"],
+          },
+          {
+            id: "p3-02",
+            title: "Valgrind: The Memory Police",
+            desc: "Run every program from Part I through Valgrind. Fix all reported leaks and errors. Research: memcheck, --leak-check=full, what 'definitely lost' vs 'possibly lost' means.",
+            tags: ["memory", "valgrind", "tools"],
+          },
+          {
+            id: "p3-03",
+            title: "Write a Makefile From Scratch",
+            desc: "Stop using IDE build buttons. Write a Makefile for a multi-file C project with separate compilation, a clean target, and automatic dependency tracking. Research: make rules, $@, $<, $^, pattern rules, -MMD flag.",
+            tags: ["build", "makefile", "tooling"],
+          },
+          {
+            id: "p3-04",
+            title: "Understand Compilation Stages",
+            desc: "Take one C file and manually run each stage: preprocessing (gcc -E), compilation (gcc -S), assembly (as), linking (ld). Read the output of each stage. Research: ELF format, object files, symbol tables, nm and objdump.",
+            tags: ["compilation", "ELF", "linker"],
+          },
+          {
+            id: "p3-05",
+            title: "Concurrency: Threads & Mutexes",
+            desc: "Write a producer-consumer program using pthreads: one thread generates data, another consumes it, sharing a buffer protected by a mutex. Deliberately introduce a race condition and observe the breakage. Research: pthread_create, pthread_mutex_lock, condition variables.",
+            tags: ["threads", "pthreads", "concurrency"],
+          },
+          {
+            id: "p3-06",
+            title: "Network Socket From Scratch",
+            desc: "Write a minimal TCP server in C that accepts one connection and echoes back whatever it receives. Then write the client. No libraries beyond <sys/socket.h>. Research: socket(), bind(), listen(), accept(), the BSD socket API.",
+            tags: ["networking", "sockets", "TCP"],
+          },
+          {
+            id: "p3-07",
+            title: "Read the /proc Filesystem",
+            desc: "Write a program that reads /proc/cpuinfo, /proc/meminfo, and /proc/<your_pid>/status and parses useful fields. Research: /proc as a virtual filesystem, how the kernel exposes runtime info, procfs vs sysfs.",
+            tags: ["procfs", "sysfs", "Linux internals"],
+          },
+          {
+            id: "p3-08",
+            title: "Port a JS Thing to C",
+            desc: "Take something small you've built in JS — a data transformer, a simple parser, a stats calculator — and rewrite it in C. No equivalent JS libraries allowed. This will teach you more about both languages than any tutorial.",
+            tags: ["translation", "practical", "mindset"],
+          },
+        ],
+      },
+    };
+
+    const tagColors = {
+      pointers: "#ff6b6b",
+      memory: "#ffd166",
+      kernel: "#06d6a0",
+      GPIO: "#118ab2",
+      debugging: "#a78bfa",
+      tools: "#f4a261",
+      threads: "#e76f51",
+      strings: "#52b788",
+      default: "#94a3b8",
+    };
+
+    function getTagColor(tag) {
+      return tagColors[tag] || tagColors.default;
+    }
+
+    // State management
+    const state = {
+      done: {},
+      expanded: {},
+    };
+
+    // Toggle done status
+    function toggleDone(id) {
+      state.done[id] = !state.done[id];
+      updateUI();
+      // Persist to localStorage
+      localStorage.setItem("c-done", JSON.stringify(state.done));
+    }
+
+    // Toggle expand status
+    function toggleExpand(id) {
+      state.expanded[id] = !state.expanded[id];
+      updateUI();
+    }
+
+    // Update progress and render
+    function updateUI() {
+      updateProgress();
+      updateCards();
+    }
+
+    // Update progress bar and text
+    function updateProgress() {
+      const total = Object.values(exercises)
+        .flatMap((p) => p.items)
+        .length;
+      const completed = Object.values(state.done).filter(Boolean).length;
+
+      const percentage = total > 0 ? (completed / total) * 100 : 0;
+      document.getElementById("progressBar").style.width = percentage + "%";
+      document.getElementById("progressText").textContent =
+        completed + " / " + total + " completed";
+    }
+
+    // Update card display
+    function updateCards() {
+      Object.values(exercises).forEach((part) => {
+        part.items.forEach((item) => {
+          const card = document.getElementById("card-" + item.id);
+          if (!card) return;
+
+          const isDone = !!state.done[item.id];
+          const isOpen = !!state.expanded[item.id];
+
+          // Update card class
+          card.classList.toggle("done", isDone);
+
+          // Update checkbox
+          const checkbox = card.querySelector(".checkbox");
+          checkbox.classList.toggle("checked", isDone);
+
+          // Update title strikethrough
+          const title = card.querySelector(".card-title");
+          title.classList.toggle("done", isDone);
+
+          // Update expand arrow
+          const arrow = card.querySelector(".expand-arrow");
+          arrow.classList.toggle("open", isOpen);
+
+          // Update content visibility
+          const content = card.querySelector(".card-content");
+          content.classList.toggle("open", isOpen);
+        });
+      });
+    }
+
+    // Render the app
+    function render() {
+      const container = document.getElementById("partsContainer");
+      container.innerHTML = "";
+
+      Object.values(exercises).forEach((part) => {
+        const partDone = part.items.filter((i) => state.done[i.id]).length;
+
+        const partDiv = document.createElement("div");
+        partDiv.className = "part";
+
+        // Part header
+        const headerDiv = document.createElement("div");
+        headerDiv.className = "part-header";
+        headerDiv.style.borderLeftColor = part.color;
+
+        const doneDiv = document.createElement("div");
+        doneDiv.className = "part-done";
+        doneDiv.style.color = part.color;
+        doneDiv.textContent = partDone + "/" + part.items.length + " DONE";
+
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "part-title";
+        titleDiv.textContent = part.title;
+
+        const subtitleDiv = document.createElement("div");
+        subtitleDiv.className = "part-subtitle";
+        subtitleDiv.textContent = part.subtitle;
+
+        headerDiv.appendChild(doneDiv);
+        headerDiv.appendChild(titleDiv);
+        headerDiv.appendChild(subtitleDiv);
+
+        // Cards container
+        const cardsDiv = document.createElement("div");
+        cardsDiv.className = "cards";
+
+        part.items.forEach((item, idx) => {
+          const isDone = !!state.done[item.id];
+
+          // Card
+          const card = document.createElement("div");
+          card.className = "card";
+          card.id = "card-" + item.id;
+          if (isDone) card.classList.add("done");
+
+          // Card header
+          const cardHeader = document.createElement("div");
+          cardHeader.className = "card-header";
+          cardHeader.onclick = () => toggleExpand(item.id);
+
+          // Checkbox
+          const checkbox = document.createElement("div");
+          checkbox.className = "checkbox";
+          if (isDone) checkbox.classList.add("checked");
+          checkbox.onclick = (e) => {
+            e.stopPropagation();
+            toggleDone(item.id);
+          };
+
+          if (isDone) {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("width", "10");
+            svg.setAttribute("height", "8");
+            svg.setAttribute("viewBox", "0 0 10 8");
+            svg.setAttribute("fill", "none");
+
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", "M1 4L3.5 6.5L9 1");
+            path.setAttribute("stroke-width", "2");
+            path.setAttribute("stroke-linecap", "round");
+            path.setAttribute("stroke-linejoin", "round");
+
+            svg.appendChild(path);
+            checkbox.appendChild(svg);
+          }
+
+          // Index
+          const index = document.createElement("div");
+          index.className = "card-index";
+          index.textContent = String(idx + 1).padStart(2, "0");
+
+          // Title
+          const titleSpan = document.createElement("div");
+          titleSpan.className = "card-title";
+          if (isDone) titleSpan.classList.add("done");
+          titleSpan.textContent = item.title;
+
+          // Arrow
+          const arrow = document.createElement("div");
+          arrow.className = "expand-arrow";
+          if (state.expanded[item.id]) arrow.classList.add("open");
+          arrow.textContent = "▼";
+
+          cardHeader.appendChild(checkbox);
+          cardHeader.appendChild(index);
+          cardHeader.appendChild(titleSpan);
+          cardHeader.appendChild(arrow);
+
+          // Card content
+          const content = document.createElement("div");
+          content.className = "card-content";
+          if (state.expanded[item.id]) content.classList.add("open");
+
+          const desc = document.createElement("p");
+          desc.className = "card-description";
+          desc.textContent = item.desc;
+
+          const tagsDiv = document.createElement("div");
+          tagsDiv.className = "tags";
+
+          item.tags.forEach((tag) => {
+            const tagSpan = document.createElement("span");
+            tagSpan.className = "tag";
+            const color = getTagColor(tag);
+            tagSpan.style.color = color;
+            tagSpan.style.borderColor = color + "40";
+            tagSpan.style.background = color + "18";
+            tagSpan.textContent = tag;
+            tagsDiv.appendChild(tagSpan);
+          });
+
+          content.appendChild(desc);
+          content.appendChild(tagsDiv);
+
+          card.appendChild(cardHeader);
+          card.appendChild(content);
+          cardsDiv.appendChild(card);
+        });
+
+        partDiv.appendChild(headerDiv);
+        partDiv.appendChild(cardsDiv);
+        container.appendChild(partDiv);
+      });
+
+      updateProgress();
+    }
+
+    // Load saved state from localStorage
+    function loadState() {
+      const saved = localStorage.getItem("c-done");
+      if (saved) {
+        state.done = JSON.parse(saved);
+      }
+    }
+
+    // Initialize
+    loadState();
+    render();
+
+  </script>
+</body>
+
+</html>
