@@ -241,7 +241,7 @@
       <div class="header-label">C LEARNING EXERCISES // JS → EMBEDDED LINUX TRACK</div>
       <h1>C by Doing</h1>
       <p class="subtitle">
-        Research-first exercises. Each one has a thing to build and a list of
+       \n Research-first exercises. Each one has a thing to build and a list of
         things to look up. No hand-holding.
       </p>
 
@@ -269,73 +269,73 @@
           {
             id: "p1-01",
             title: "Hello, Manual Memory",
-            desc: "Write a program that declares an int, a float, a char, and a pointer to each. Print their values AND their memory addresses. Research: sizeof(), format specifiers (%d, %f, %c, %p), stack vs heap.",
+            desc: "Write a program that declares an int, a float, a char, and a pointer to each. Print their values AND their memory addresses.\n Research: sizeof(), format specifiers (%d, %f, %c, %p), stack vs heap.",
             tags: ["pointers", "types", "printf"],
           },
           {
             id: "p1-02",
             title: "The Stack Doesn't Lie",
-            desc: "Write a function that returns a local variable by value vs by pointer. Try returning a pointer to a local variable — observe what happens. Research: stack frames, undefined behavior, why JS doesn't have this problem.",
+            desc: "Write a function that returns a local variable by value vs by pointer. Try returning a pointer to a local variable — observe what happens.\n Research: stack frames, undefined behavior, why JS doesn't have this problem.",
             tags: ["stack", "pointers", "UB"],
           },
           {
             id: "p1-03",
             title: "malloc & free: Your New Best Friends",
-            desc: "Dynamically allocate an array of 10 ints on the heap, fill it with squares (1, 4, 9...), print it, then free it. Then: deliberately forget to free it. Research: malloc, calloc, realloc, free, memory leaks, valgrind.",
+            desc: "Dynamically allocate an array of 10 ints on the heap, fill it with squares (1, 4, 9...), print it, then free it. Then: deliberately forget to free it.\n Research: malloc, calloc, realloc, free, memory leaks, valgrind.",
             tags: ["heap", "malloc", "memory"],
           },
           {
             id: "p1-04",
             title: "Pointer Arithmetic Safari",
-            desc: "Create an array of 5 ints. Access elements using pointer arithmetic (*(arr+i)) instead of arr[i]. Prove they're identical. Then: try going out of bounds and observe behavior. Research: why arrays decay to pointers in C.",
+            desc: "Create an array of 5 ints. Access elements using pointer arithmetic (*(arr+i)) instead of arr[i]. Prove they're identical. Then: try going out of bounds and observe behavior.\n Research: why arrays decay to pointers in C.",
             tags: ["pointers", "arrays", "arithmetic"],
           },
           {
             id: "p1-05",
             title: "Strings Are Just Char Arrays",
-            desc: "Implement your own versions of strlen(), strcpy(), and strcat() without using <string.h>. Research: null terminator '\\0', why C strings are dangerous, buffer overflows.",
+            desc: "Implement your own versions of strlen(), strcpy(), and strcat() without using <string.h>.\n Research: null terminator '\\0', why C strings are dangerous, buffer overflows.",
             tags: ["strings", "arrays", "stdlib"],
           },
           {
             id: "p1-06",
             title: "Structs: C's Objects",
-            desc: "Model a simple 'sensor reading' as a struct with fields: id (int), value (float), timestamp (long). Write functions to create one on the heap, print it, and free it. Research: struct padding, typedef, struct vs class.",
+            desc: "Model a simple 'sensor reading' as a struct with fields: id (int), value (float), timestamp (long). Write functions to create one on the heap, print it, and free it.\n Research: struct padding, typedef, struct vs class.",
             tags: ["structs", "typedef", "memory"],
           },
           {
             id: "p1-07",
             title: "Enums & Bitfields",
-            desc: "Define an enum for device states (IDLE, RUNNING, ERROR, SLEEP). Use a switch statement to print a message per state. Then: pack multiple boolean flags into a single uint8_t using bitwise ops. Research: bit masking, |=, &=, ~.",
+            desc: "Define an enum for device states (IDLE, RUNNING, ERROR, SLEEP). Use a switch statement to print a message per state. Then: pack multiple boolean flags into a single uint8_t using bitwise ops.\n Research: bit masking, |=, &=, ~.",
             tags: ["enums", "bitwise", "flags"],
           },
           {
             id: "p1-08",
             title: "Functions as First-Class (Sort Of)",
-            desc: "Write a sort function that takes an int array and a comparator function pointer. Use it to sort ascending, then descending, without changing the sort logic. Research: function pointers syntax, callbacks in C.",
+            desc: "Write a sort function that takes an int array and a comparator function pointer. Use it to sort ascending, then descending, without changing the sort logic.\n Research: function pointers syntax, callbacks in C.",
             tags: ["function pointers", "callbacks"],
           },
           {
             id: "p1-09",
             title: "The Preprocessor Is a Different Beast",
-            desc: "Write macros for MIN(a,b), MAX(a,b), and ARRAY_LEN(arr). Find a case where a naive macro breaks (hint: side effects). Research: #define, #ifdef, include guards, why macros are dangerous.",
+            desc: "Write macros for MIN(a,b), MAX(a,b), and ARRAY_LEN(arr). Find a case where a naive macro breaks (hint: side effects).\n Research: #define, #ifdef, include guards, why macros are dangerous.",
             tags: ["macros", "preprocessor"],
           },
           {
             id: "p1-10",
             title: "Build a Linked List",
-            desc: "Implement a singly linked list: node struct, insert_front(), insert_back(), delete_node(), print_list(), free_list(). No helper libraries. Research: recursive free, NULL checks, common linked list bugs.",
+            desc: "Implement a singly linked list: node struct, insert_front(), insert_back(), delete_node(), print_list(), free_list(). No helper libraries.\n Research: recursive free, NULL checks, common linked list bugs.",
             tags: ["data structures", "pointers", "malloc"],
           },
           {
             id: "p1-11",
             title: "File I/O: Read a Config",
-            desc: "Write a program that reads a .txt config file with key=value pairs (e.g. baud_rate=9600) and stores them in a struct. Research: fopen, fgets, sscanf, fclose, error handling with errno.",
+            desc: "Write a program that reads a .txt config file with key=value pairs (e.g. baud_rate=9600) and stores them in a struct.\n Research: fopen, fgets, sscanf, fclose, error handling with errno.",
             tags: ["file I/O", "parsing", "errno"],
           },
           {
             id: "p1-12",
             title: "Static & Volatile: The Quiet Keywords",
-            desc: "Write a counter function that uses a static local variable to persist its count between calls. Then declare a volatile int and research why volatile matters in embedded contexts (even if you can't fully test it yet). Research: static storage duration, volatile and compiler optimizations.",
+            desc: "Write a counter function that uses a static local variable to persist its count between calls. Then declare a volatile int and research why volatile matters in embedded contexts (even if you can't fully test it yet).\n Research: static storage duration, volatile and compiler optimizations.",
             tags: ["static", "volatile", "scope"],
           },
         ],
@@ -349,73 +349,73 @@
           {
             id: "p2-01",
             title: "Blink Without Arduino.h",
-            desc: "On your RPi4 or BeagleBone, blink an LED by writing directly to GPIO registers — no library, no abstraction. Research: memory-mapped I/O, /dev/mem or /sys/class/gpio, mmap(), why embedded C skips the OS abstractions.",
+            desc: "On your RPi4 or BeagleBone, blink an LED by writing directly to GPIO registers — no library, no abstraction.\n Research: memory-mapped I/O, /dev/mem or /sys/class/gpio, mmap(), why embedded C skips the OS abstractions.",
             tags: ["GPIO", "registers", "mmap"],
           },
           {
             id: "p2-02",
             title: "Read a Datasheet",
-            desc: "Pick any cheap sensor (DHT11, HC-SR04, or a button). Find its datasheet. Write C code to read it by manually driving the protocol (bit-banging). No driver libraries. Research: timing constraints, busy-wait loops, nanosleep().",
+            desc: "Pick any cheap sensor (DHT11, HC-SR04, or a button). Find its datasheet. Write C code to read it by manually driving the protocol (bit-banging). No driver libraries.\n Research: timing constraints, busy-wait loops, nanosleep().",
             tags: ["sensors", "protocols", "datasheet"],
           },
           {
             id: "p2-03",
             title: "UART: Talk to Something",
-            desc: "Open a serial (UART) port in C, configure it (baud rate, parity, stop bits) using termios, send a string, and read back a response (use your phone with a serial terminal app). Research: termios struct, canonical vs raw mode, read() blocking behavior.",
+            desc: "Open a serial (UART) port in C, configure it (baud rate, parity, stop bits) using termios, send a string, and read back a response (use your phone with a serial terminal app).\n Research: termios struct, canonical vs raw mode, read() blocking behavior.",
             tags: ["UART", "serial", "termios"],
           },
           {
             id: "p2-04",
             title: "I2C Without a Library",
-            desc: "Connect an I2C device (MPU6050 IMU or SSD1306 OLED are cheap). Write a C program using the Linux i2c-dev interface (/dev/i2c-N) to read a register directly. Research: i2c_smbus_read_byte_data, ioctl, I2C protocol basics.",
+            desc: "Connect an I2C device (MPU6050 IMU or SSD1306 OLED are cheap). Write a C program using the Linux i2c-dev interface (/dev/i2c-N) to read a register directly.\n Research: i2c_smbus_read_byte_data, ioctl, I2C protocol basics.",
             tags: ["I2C", "ioctl", "i2c-dev"],
           },
           {
             id: "p2-05",
             title: "SPI: Faster, Dumber",
-            desc: "Connect an SPI device (MAX31855 thermocouple or a SPI flash chip). Read data using the Linux spidev interface. Compare the experience to I2C. Research: SPI modes (CPOL/CPHA), full-duplex transfers, struct spi_ioc_transfer.",
+            desc: "Connect an SPI device (MAX31855 thermocouple or a SPI flash chip). Read data using the Linux spidev interface. Compare the experience to I2C.\n Research: SPI modes (CPOL/CPHA), full-duplex transfers, struct spi_ioc_transfer.",
             tags: ["SPI", "spidev", "protocols"],
           },
           {
             id: "p2-06",
             title: "Write a Kernel Module (Hello World)",
-            desc: "Write, compile, and load a basic Linux kernel module that prints to dmesg on load and unload. Research: module_init, module_exit, printk, insmod, rmmod, Makefile for out-of-tree modules.",
+            desc: "Write, compile, and load a basic Linux kernel module that prints to dmesg on load and unload.\n Research: module_init, module_exit, printk, insmod, rmmod, Makefile for out-of-tree modules.",
             tags: ["kernel", "modules", "LKM"],
           },
           {
             id: "p2-07",
             title: "A Character Device Driver",
-            desc: "Extend your kernel module into a character device that userspace can open, read from, and write to via /dev/mydevice. Research: file_operations struct, copy_to_user, copy_from_user, register_chrdev.",
+            desc: "Extend your kernel module into a character device that userspace can open, read from, and write to via /dev/mydevice.\n Research: file_operations struct, copy_to_user, copy_from_user, register_chrdev.",
             tags: ["char device", "kernel", "file_operations"],
           },
           {
             id: "p2-08",
             title: "Interrupts: Stop Polling",
-            desc: "Rewrite your GPIO button reader to use an interrupt instead of a polling loop. In kernel space, or userspace via epoll on a GPIO value file. Research: request_irq, IRQ handler constraints, interrupt latency, the problem with sleeping in interrupt context.",
+            desc: "Rewrite your GPIO button reader to use an interrupt instead of a polling loop. In kernel space, or userspace via epoll on a GPIO value file.\n Research: request_irq, IRQ handler constraints, interrupt latency, the problem with sleeping in interrupt context.",
             tags: ["interrupts", "IRQ", "epoll"],
           },
           {
             id: "p2-09",
             title: "Memory: Userspace vs Kernelspace",
-            desc: "Write a program that allocates memory in userspace, then research how it would differ in kernelspace. Experiment with mmap() to map a file into memory and modify it. Research: virtual memory, kmalloc vs vmalloc, page size.",
+            desc: "Write a program that allocates memory in userspace, then research how it would differ in kernelspace. Experiment with mmap() to map a file into memory and modify it.\n Research: virtual memory, kmalloc vs vmalloc, page size.",
             tags: ["memory", "mmap", "virtual memory"],
           },
           {
             id: "p2-10",
             title: "The Device Tree",
-            desc: "Read the device tree on your board (/proc/device-tree or dtc -I fs). Find the node for a peripheral you've used. Write a simple DTS overlay. Research: Device Tree syntax, compatible strings, how the kernel uses DT to find drivers.",
+            desc: "Read the device tree on your board (/proc/device-tree or dtc -I fs). Find the node for a peripheral you've used. Write a simple DTS overlay.\n Research: Device Tree syntax, compatible strings, how the kernel uses DT to find drivers.",
             tags: ["device tree", "DTS", "kernel"],
           },
           {
             id: "p2-11",
             title: "Build a Tiny Sensor Daemon",
-            desc: "Write a C daemon that reads a sensor every N seconds, writes readings to a log file, handles SIGTERM for clean shutdown, and survives a crash (restart logic or systemd watchdog). Research: fork, daemon(), signal(), sigaction, systemd service units.",
+            desc: "Write a C daemon that reads a sensor every N seconds, writes readings to a log file, handles SIGTERM for clean shutdown, and survives a crash (restart logic or systemd watchdog).\n Research: fork, daemon(), signal(), sigaction, systemd service units.",
             tags: ["daemon", "signals", "systemd"],
           },
           {
             id: "p2-12",
             title: "Cross-Compile It",
-            desc: "Set up a cross-compilation toolchain on your host machine. Compile a simple C program for ARM (your target board) from your x86 host. Transfer and run it. Research: gcc cross toolchain, arm-linux-gnueabihf-gcc, sysroot, why this matters for Yocto.",
+            desc: "Set up a cross-compilation toolchain on your host machine. Compile a simple C program for ARM (your target board) from your x86 host. Transfer and run it.\n Research: gcc cross toolchain, arm-linux-gnueabihf-gcc, sysroot, why this matters for Yocto.",
             tags: ["cross-compile", "toolchain", "ARM"],
           },
         ],
@@ -429,43 +429,43 @@
           {
             id: "p3-01",
             title: "Learn GDB Like Your Life Depends on It",
-            desc: "Take any program you've written that has a bug (or introduce one). Debug it using only GDB: set breakpoints, step through, inspect memory with x/, watch variables. Never use printf-debugging again. Research: gdb commands, core dumps, backtrace.",
+            desc: "Take any program you've written that has a bug (or introduce one). Debug it using only GDB: set breakpoints, step through, inspect memory with x/, watch variables. Never use printf-debugging again.\n Research: gdb commands, core dumps, backtrace.",
             tags: ["debugging", "gdb", "tools"],
           },
           {
             id: "p3-02",
             title: "Valgrind: The Memory Police",
-            desc: "Run every program from Part I through Valgrind. Fix all reported leaks and errors. Research: memcheck, --leak-check=full, what 'definitely lost' vs 'possibly lost' means.",
+            desc: "Run every program from Part I through Valgrind. Fix all reported leaks and errors.\n Research: memcheck, --leak-check=full, what 'definitely lost' vs 'possibly lost' means.",
             tags: ["memory", "valgrind", "tools"],
           },
           {
             id: "p3-03",
             title: "Write a Makefile From Scratch",
-            desc: "Stop using IDE build buttons. Write a Makefile for a multi-file C project with separate compilation, a clean target, and automatic dependency tracking. Research: make rules, $@, $<, $^, pattern rules, -MMD flag.",
+            desc: "Stop using IDE build buttons. Write a Makefile for a multi-file C project with separate compilation, a clean target, and automatic dependency tracking.\n Research: make rules, $@, $<, $^, pattern rules, -MMD flag.",
             tags: ["build", "makefile", "tooling"],
           },
           {
             id: "p3-04",
             title: "Understand Compilation Stages",
-            desc: "Take one C file and manually run each stage: preprocessing (gcc -E), compilation (gcc -S), assembly (as), linking (ld). Read the output of each stage. Research: ELF format, object files, symbol tables, nm and objdump.",
+            desc: "Take one C file and manually run each stage: preprocessing (gcc -E), compilation (gcc -S), assembly (as), linking (ld). Read the output of each stage.\n Research: ELF format, object files, symbol tables, nm and objdump.",
             tags: ["compilation", "ELF", "linker"],
           },
           {
             id: "p3-05",
             title: "Concurrency: Threads & Mutexes",
-            desc: "Write a producer-consumer program using pthreads: one thread generates data, another consumes it, sharing a buffer protected by a mutex. Deliberately introduce a race condition and observe the breakage. Research: pthread_create, pthread_mutex_lock, condition variables.",
+            desc: "Write a producer-consumer program using pthreads: one thread generates data, another consumes it, sharing a buffer protected by a mutex. Deliberately introduce a race condition and observe the breakage.\n Research: pthread_create, pthread_mutex_lock, condition variables.",
             tags: ["threads", "pthreads", "concurrency"],
           },
           {
             id: "p3-06",
             title: "Network Socket From Scratch",
-            desc: "Write a minimal TCP server in C that accepts one connection and echoes back whatever it receives. Then write the client. No libraries beyond <sys/socket.h>. Research: socket(), bind(), listen(), accept(), the BSD socket API.",
+            desc: "Write a minimal TCP server in C that accepts one connection and echoes back whatever it receives. Then write the client. No libraries beyond <sys/socket.h>.\n Research: socket(), bind(), listen(), accept(), the BSD socket API.",
             tags: ["networking", "sockets", "TCP"],
           },
           {
             id: "p3-07",
             title: "Read the /proc Filesystem",
-            desc: "Write a program that reads /proc/cpuinfo, /proc/meminfo, and /proc/<your_pid>/status and parses useful fields. Research: /proc as a virtual filesystem, how the kernel exposes runtime info, procfs vs sysfs.",
+            desc: "Write a program that reads /proc/cpuinfo, /proc/meminfo, and /proc/<your_pid>/status and parses useful fields.\n Research: /proc as a virtual filesystem, how the kernel exposes runtime info, procfs vs sysfs.",
             tags: ["procfs", "sysfs", "Linux internals"],
           },
           {
@@ -671,7 +671,7 @@
 
           const desc = document.createElement("p");
           desc.className = "card-description";
-          desc.textContent = item.desc;
+          desc.innerHTML = item.desc.replace(/\n/g, "<br><br>"); // Add extra spacing for newlines
 
           const tagsDiv = document.createElement("div");
           tagsDiv.className = "tags";
