@@ -13,3 +13,7 @@ arm:
 aarch64:
 	aarch64-linux-gnu-gcc -o aarch64 rosetta.c -static
 	aarch64-linux-gnu-objdump -d -Mintel ./aarch64 > aarch64-dump
+
+arm-draft:
+	arm-linux-gnueabi-gcc -o draft draft.c -static
+	arm-linux-gnueabi-objdump -d -Mintel ./draft > draft-dump
