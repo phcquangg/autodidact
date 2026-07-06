@@ -1,0 +1,39 @@
+menu "Hardware Customization"
+
+config CUSTOM_DRIVER
+  tristate "Compile Custom Driver"
+  default m
+  help
+    This option allows you to compile a custom driver for your hardware.
+    If you select 'm', the driver will be built as a module.
+    If you select 'y', the driver will be built into the kernel.
+    If you select 'n', the driver will not be included.
+
+config GO_SAVE_CAPTAIN_ALEX
+  bool "Enable Saving Captain Alex Mode"
+  depends on CUSTOM_DRIVER
+  default n
+  help
+    Save Alex da captain
+
+config IS_EVERYBODY_KNEW_KUNGFU
+  bool "Iz everybody knew kungfu?"
+  depends on CUSTOM_DRIVER
+  depends on GO_SAVE_CAPTAIN_ALEX
+  default n
+  help
+    Everybody in Uganda knows kungfoo.
+config DEVICE_SERIAL_PORT
+  string "Target Serial Port Interface"
+  depends on CUSTOM_DRIVER
+  default "/dev/ttyS0"
+  help
+    Specify the system path for the primary communication port.
+
+config DEVICE_RETRY_COUNT
+  int "Maximum Connection Retries"
+  depends on CUSTOM_DRIVER
+  default 5
+  range 1 10
+
+endmenu
