@@ -1,1 +1,0 @@
-savedcmd_/home/phcquangg/learnspace/autodidact/some-linux-kernel/crypto-buffer/Module.symvers :=  scripts/mod/modpost -M -m -a      -o /home/phcquangg/learnspace/autodidact/some-linux-kernel/crypto-buffer/Module.symvers -T /home/phcquangg/learnspace/autodidact/some-linux-kernel/crypto-buffer/modules.order -i Module.symvers -e 
