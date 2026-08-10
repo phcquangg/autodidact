@@ -1,0 +1,63 @@
+/{
+  compatible = "nvidia,harmony", "nvidia,tegra20";
+  #address-cells = <1>;
+  #size-cells = <1>;
+  interrupt-parent = <&intc>;
+
+  chosen {
+  };
+  aliases {
+  };
+
+  memory {
+    device_type = "memory";
+    reg = <0x00000000 0x40000000>;
+  };
+
+  soc {
+    compatible = "nvidia,tegra20-soc", "simple-bus";
+    #address-cells = <1>;
+    #size-cells = <1>;
+    ranges;
+
+    intc: interrupt-controller@50041000 {
+      compatible = "nvidia,tegra20-gic";
+      interrupt-controller;
+      #interrupt-cells = <1>;
+      reg = <0x50041000 0x1000>, <0x50040100 0x0100>;
+    };
+
+    serial@70006300 {
+      compatible = "nvidia,tegra20-uart";
+      reg = <0x70006300 0x100>;
+      interrupts = <122>;
+    };
+
+    i2s1: i2s@70002800 {
+      compatible = "nvidia,tegra20-i2s";
+      reg = <0x70002800 0x100>;
+      interrupts = <77>;
+      codec = <&wm8903>;
+    };
+
+    i2c@7000c000 {
+      compatible = "nvidia,tegra20-i2c";
+      #address-cells = <1>;
+      #size-cells = <0>;
+      reg = <0x7000c000 0x100>;
+      interrupts = <70>;
+
+      wm8903: codec@1a {
+        compatible = "wlf,wm8903";
+        reg = <0x1a>;
+        interrupts = <347>;
+      };
+    };
+  };
+
+  sound {
+    compatible = "nvidia,harmony-sound";
+    i2s-controller = <&i2s1>;
+    i2s-codec = <&wm8903>;
+  };
+};
