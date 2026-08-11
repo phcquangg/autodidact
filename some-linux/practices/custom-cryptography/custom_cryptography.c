@@ -27,6 +27,24 @@ static dev_t dev_number;
 
 static struct xorbox_dev *cur_dev;
 
+static int dev_open (struct inode *inode, struct file *filp);
+static int dev_release (struct inode *inode, struct file *filp);
+static ssize_t dev_read (struct file *filp, char __user *buffer, size_t len, loff_t *offset);
+static ssize_t dev_write (struct file *filp, const char __user *buffer, size_t len, loff_t *offset);
+static loff_t dev_llseek (struct file *filp, loff_t offset, int whence);
+static long dev_unlocked_ioctl (struct file *filp, unsigned int cmd, unsigned long arg);
+static long dev_compat_ioctl (struct file *filp, unsigned int cmd, unsigned long arg);
+
+static struct file_operations fops = {
+	.open = dev_open,
+	.release = dev_release,
+	.read = dev_read,
+	.write = dev_write,
+	.unlocked_ioctl = dev_unlocked_ioctl,
+	.compat_ioctl = dev_compat_ioctl,
+	.llseek = dev_llseek
+};
+
 static int __init xorbox_init(void)
 {
 	int allocated_number;
