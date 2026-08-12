@@ -9,6 +9,7 @@
 #include <linux/kdev_t.h> // MAJOR() & MINOR() macros
 #include <linux/mutex.h>
 #include <linux/slab.h>		// kmalloc & kfree
+#include <linux/uaccess.h> // copy_from_user & copy_to_user
 
 #define DEV_COUNT 1
 
@@ -28,10 +29,78 @@ static dev_t dev_number;
 
 static struct xorbox_dev *cur_dev;
 
-static int dev_open (struct inode *inode, struct file *filp);
-static int dev_release (struct inode *inode, struct file *filp);
+static int dev_open (struct inode *inode, struct file *filp)
+{
+	struct xorbox_dev *dev;
+	dev = container_of( inode->i_cdev, struct xorbox_dev, cdev):
+	
+	filp->private_data = dev;
+	
+	pr_info("Device opened successfully\n";
+	return 0;
+}
+
+static int dev_release (struct inode *inode, struct file *filp)
+{
+	pr_info("Device closed successfully\n")'
+	return 0;
+}
+
 static ssize_t dev_read (struct file *filp, char __user *buffer, size_t len, loff_t *offset);
+
 static ssize_t dev_write (struct file *filp, const char __user *buffer, size_t len, loff_t *offset);
+{
+	/* *
+	Retrieve struct xorbox_dev *dev from filp->private_data.
+		Acquire the mutex lock (mutex_lock_interruptible).
+		Check how much free space remains in dev->buffer.
+		Copy bytes safely from user space into a temporary kernel stack buffer using copy_from_user().
+		Obfuscate/encrypt each byte using dev->key (byte ^ key).
+		Place the transformed bytes into dev->buffer and advance head and data_len.
+		Release the mutex (mutex_unlock).
+		Return the number of bytes successfully written.
+	*/
+	
+	struct xorbox_dev *dev = filp->private_data;
+	char kbuf[128];
+	size_t bytes_to_write;
+	size_t bytes_written = 0;
+
+	if (mutex_lock_interruptible( &dev->lock)) return -ERESTARTSYS;
+	
+	size_t available_space = dev->buffer_size - dev->data_len;
+	if (available_space == 0) {
+		mutex_unlock(&dev->lock);
+		return -ENOSPC;
+	}
+
+	bytes_to_write = min(len, available_space);
+	
+	while (bytes_written < bytes_to_write) {
+		size_t chunk_size = min(bytes_to_write - bytes_written, sizeof(kbuf));
+
+		if (copy_from_user(kbuf, buffer + bytes_written, chunk_size)) {
+			mutex_unlock(&dev->lock);
+			return -EFAULT;
+		}
+		
+		for (size_t i = 0; i < chunk_size; i++) {
+			char obfuscated_byte = kbuf[i] ^ dev->key;
+
+			dev->buffer[dev->head] = obfuscated_byte;
+			dev->head = (dev->head + 1) % dev->buffer_size; // circular wrap
+			dev->data_len++;
+		}
+
+		bytes_written += chunk_size;
+	}
+
+	mutex_unlock(&dev->lock);
+	pr_info("Wrote %zu bytes (XOR'd with key 0x%02X)\n", bytes_written, dev->key);
+
+	return bytes_written;
+}
+
 static loff_t dev_llseek (struct file *filp, loff_t offset, int whence);
 static long dev_unlocked_ioctl (struct file *filp, unsigned int cmd, unsigned long arg);
 static long dev_compat_ioctl (struct file *filp, unsigned int cmd, unsigned long arg);
