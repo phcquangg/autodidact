@@ -8,6 +8,7 @@
 #include <linux/fs.h>			// major/minor numbers w alloc_chrdev_region ...
 #include <linux/kdev_t.h> // MAJOR() & MINOR() macros
 #include <linux/mutex.h>
+#include <linux/slab.h>		// kmalloc & kfree
 
 #define DEV_COUNT 1
 
@@ -48,6 +49,8 @@ static struct file_operations fops = {
 static int __init xorbox_init(void)
 {
 	int allocated_number;
+	int ret;
+
 	allocated_number = alloc_chrdev_region(&dev_number, 0, DEV_COUNT, "dev_number");
 
 	if (allocated_number < 0)
@@ -58,7 +61,7 @@ static int __init xorbox_init(void)
 
 	pr_info("Number allocated\n");
 	pr_info("allocated_number: %d\n", allocated_number);
-	pr_info("dev_number: %U\n", dev_number);
+	pr_info("dev_number: %u\n", dev_number);
 	pr_info("Major number: %d\n", MAJOR(dev_number));
 	pr_info("Minor number: %d\n", MINOR(dev_number));
 
@@ -66,7 +69,9 @@ static int __init xorbox_init(void)
 	if (!cur_dev)
 	{
 		pr_err("Failed to allocate device memory\n");
-		return -ENOMEM;
+
+		ret = -ENOMEM;
+		goto err_unregister;
 	}
 
 	mutex_init(&cur_dev->lock);
@@ -77,7 +82,9 @@ static int __init xorbox_init(void)
 	if (!cur_dev->buffer)
 	{
 		pr_err("Failed to allocate buffer \n");
-		return -ENOMEM;
+
+		ret = -ENOMEM;
+		goto err_free_dev;
 	}
 
 	cur_dev->head = 0;
@@ -87,17 +94,42 @@ static int __init xorbox_init(void)
 
 	pr_info("Mutex & buffer initialized successfully\n");
 
+	// cdev
+	cdev_init(&cur_dev->cdev, &fops);
+	cur_dev->cdev.owner = THIS_MODULE;
+
+	ret = cdev_add(&cur_dev->cdev, dev_number, DEV_COUNT);
+	
+	if (ret < 0) {
+		pr_err("Failed to add cdev\n");
+		goto err_free_buffer;
+	}
+
 	return 0;
+
+	err_free_buffer:
+		kfree(cur_dev->buffer);
+	err_free_dev:
+		kfree(cur_dev);
+	err_unregister:
+		unregister_chrdev_region(dev_number, DEV_COUNT);
+		return ret;	
 }
 
 static void __exit xorbox_exit(void)
 {
+	if (cur_dev) {
+		cdev_del(&cur_dev->cdev);
+		kfree(cur_dev->buffer);
+		kfree(cur_dev);
+	}
+
 	unregister_chrdev_region(dev_number, DEV_COUNT);
 	pr_info("Device numbers unregistered\n");
 }
 
 MODULE_AUTHOR("Supa Quang");
-MODULE_DESCRIPTION("Lorem Ipsum");
+MODULE_DESCRIPTION("XOR Obfuscation Pipe Driver");
 MODULE_LICENSE("GPL");
 MODULE_VERSION("1.0");
 
