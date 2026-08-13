@@ -48,8 +48,46 @@ static int dev_release (struct inode *inode, struct file *filp)
 	return 0;
 }
 
-static ssize_t dev_read (struct file *filp, char __user *buffer, size_t len, loff_t *offset);
+static ssize_t dev_read (struct file *filp, char __user *buffer, size_t len, loff_t *offset) 
+{
+	struct xorbox_dev *dev = filp->private_data;
+	char kbuf[128];
+	size_t bytes_to_read;
+	size_t bytes_read;
+	
+	if (mutex_lock_interruptible(&dev->lock)) return -ERESTARTSYS;
+	
+	if (dev->data_len == 0) {
+		mutex_unlock(&dev->lock);
+		return 0;
+	}
 
+	bytes_to_read = min( len, dev->data_len);
+	
+	while (bytes_read < bytes_to_read) {
+		size_t chunk_size = min(bytes_to_read - bytes_read, sizeof(kbuf));
+		
+		for (size_t i = 0; i < chunk_size; i++) {
+			char cipher_byte = dev->buffer[dev->tail];
+			
+			kbuf[i] = cipher_byte ^ dev->key; // decrypt byte
+			dev->tail = (dev->tail +1) % dev->buffer_size;
+			dev->data_len--;
+		}
+
+		if (copy_to_user(buffer + bytes_read, kbuf, chunk_size)) {
+			mutex_unlock(&dev->lock);
+			return -EFAULT;
+		}
+		
+		bytes_read+=chunk_size;
+	}
+
+	mutex_unlock(&dev->lock);
+
+	pr_info("Read and decrypted %zu bytes\n", bytes_read);
+	return bytes_read;
+}
 static ssize_t dev_write (struct file *filp, const char __user *buffer, size_t len, loff_t *offset)
 {
 	struct xorbox_dev *dev = filp->private_data;
