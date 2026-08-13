@@ -1,4 +1,4 @@
-obj-m += custom_cryptography.o
+obj-m += xorbox.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
