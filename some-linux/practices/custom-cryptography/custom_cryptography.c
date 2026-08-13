@@ -10,6 +10,7 @@
 #include <linux/mutex.h>
 #include <linux/slab.h>		// kmalloc & kfree
 #include <linux/uaccess.h> // copy_from_user & copy_to_user
+#include <linux/device.h> // class_create & device_create
 
 #define DEV_COUNT 1
 
@@ -25,42 +26,32 @@ struct xorbox_dev
 	struct cdev cdev;
 };
 
+static struct class *xorbox_class = NULL;
+static struct device *xorbox_device = NULL;
 static dev_t dev_number;
-
 static struct xorbox_dev *cur_dev;
 
 static int dev_open (struct inode *inode, struct file *filp)
 {
 	struct xorbox_dev *dev;
-	dev = container_of( inode->i_cdev, struct xorbox_dev, cdev):
+	dev = container_of( inode->i_cdev, struct xorbox_dev, cdev);
 	
 	filp->private_data = dev;
 	
-	pr_info("Device opened successfully\n";
+	pr_info("Device opened successfully\n");
 	return 0;
 }
 
 static int dev_release (struct inode *inode, struct file *filp)
 {
-	pr_info("Device closed successfully\n")'
+	pr_info("Device closed successfully\n");
 	return 0;
 }
 
 static ssize_t dev_read (struct file *filp, char __user *buffer, size_t len, loff_t *offset);
 
-static ssize_t dev_write (struct file *filp, const char __user *buffer, size_t len, loff_t *offset);
+static ssize_t dev_write (struct file *filp, const char __user *buffer, size_t len, loff_t *offset)
 {
-	/* *
-	Retrieve struct xorbox_dev *dev from filp->private_data.
-		Acquire the mutex lock (mutex_lock_interruptible).
-		Check how much free space remains in dev->buffer.
-		Copy bytes safely from user space into a temporary kernel stack buffer using copy_from_user().
-		Obfuscate/encrypt each byte using dev->key (byte ^ key).
-		Place the transformed bytes into dev->buffer and advance head and data_len.
-		Release the mutex (mutex_unlock).
-		Return the number of bytes successfully written.
-	*/
-	
 	struct xorbox_dev *dev = filp->private_data;
 	char kbuf[128];
 	size_t bytes_to_write;
@@ -101,9 +92,23 @@ static ssize_t dev_write (struct file *filp, const char __user *buffer, size_t l
 	return bytes_written;
 }
 
-static loff_t dev_llseek (struct file *filp, loff_t offset, int whence);
-static long dev_unlocked_ioctl (struct file *filp, unsigned int cmd, unsigned long arg);
-static long dev_compat_ioctl (struct file *filp, unsigned int cmd, unsigned long arg);
+static loff_t dev_llseek (struct file *filp, loff_t offset, int whence)
+{
+	pr_info("dev_llseek");
+	return 0;
+}
+
+static long dev_unlocked_ioctl (struct file *filp, unsigned int cmd, unsigned long arg)
+{
+	pr_info("dev_unlocked_ioctl");
+	return 0;
+}
+
+static long dev_compat_ioctl (struct file *filp, unsigned int cmd, unsigned long arg)
+{
+	pr_info("dev_compat_ioctl");
+	return 0;
+}
 
 static struct file_operations fops = {
 	.open = dev_open,
@@ -174,8 +179,28 @@ static int __init xorbox_init(void)
 		goto err_free_buffer;
 	}
 
+	/* * create /sys/class/xorbox ----  */
+	xorbox_class = class_create("xorbox_class");
+	if (IS_ERR(xorbox_class)) {
+		pr_err("Failed to create class\n");
+		ret = PTR_ERR(xorbox_class);
+		goto err_del_cdev;
+	}
+
+	/* create /dev/xorbox automatically  */
+	xorbox_device = device_create(xorbox_class, NULL, dev_number, NULL, "xorbox");
+	if (IS_ERR(xorbox_device)) {
+		pr_err("Failed to create device node\n");
+		ret = PTR_ERR(xorbox_device);
+		goto err_destroy_class;
+	}
+
 	return 0;
 
+	err_destroy_class:
+		class_destroy(xorbox_class);
+	err_del_cdev:
+		cdev_del(&cur_dev->cdev);
 	err_free_buffer:
 		kfree(cur_dev->buffer);
 	err_free_dev:
@@ -192,6 +217,9 @@ static void __exit xorbox_exit(void)
 		kfree(cur_dev->buffer);
 		kfree(cur_dev);
 	}
+
+	if (xorbox_device) device_destroy(xorbox_class, dev_number);
+	if (xorbox_class) class_destroy(xorbox_class);
 
 	unregister_chrdev_region(dev_number, DEV_COUNT);
 	pr_info("Device numbers unregistered\n");
