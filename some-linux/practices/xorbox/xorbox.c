@@ -11,8 +11,11 @@
 #include <linux/slab.h>		// kmalloc & kfree
 #include <linux/uaccess.h> // copy_from_user & copy_to_user
 #include <linux/device.h> // class_create & device_create
+#include <linux/ioctl.h> //
 
 #define DEV_COUNT 1
+#define XORBOX_MAGIC 'X'
+#define XORBOX_SET_KEY _IOW(XORBOX_MAGIC, 1, u8)
 
 struct xorbox_dev
 {
@@ -33,13 +36,11 @@ static struct xorbox_dev *cur_dev;
 
 static int dev_open (struct inode *inode, struct file *filp)
 {
-	struct xorbox_dev *dev;
-	dev = container_of( inode->i_cdev, struct xorbox_dev, cdev);
-	
+	struct xorbox_dev *dev = container_of( inode->i_cdev, struct xorbox_dev, cdev);
 	filp->private_data = dev;
 	
 	pr_info("Device opened successfully\n");
-	return 0;
+	return nonseekable_open(inode, filp);
 }
 
 static int dev_release (struct inode *inode, struct file *filp)
@@ -52,6 +53,7 @@ static ssize_t dev_read (struct file *filp, char __user *buffer, size_t len, lof
 {
 	struct xorbox_dev *dev = filp->private_data;
 	char kbuf[128];
+	char original[128];
 	size_t bytes_to_read;
 	size_t bytes_read;
 	
@@ -64,12 +66,15 @@ static ssize_t dev_read (struct file *filp, char __user *buffer, size_t len, lof
 
 	bytes_to_read = min( len, dev->data_len);
 	
+	pr_info("buffer:", buffer);
+	
 	while (bytes_read < bytes_to_read) {
 		size_t chunk_size = min(bytes_to_read - bytes_read, sizeof(kbuf));
 		
 		for (size_t i = 0; i < chunk_size; i++) {
 			char cipher_byte = dev->buffer[dev->tail];
 			
+			original[i] = cipher_byte;
 			kbuf[i] = cipher_byte ^ dev->key; // decrypt byte
 			dev->tail = (dev->tail +1) % dev->buffer_size;
 			dev->data_len--;
@@ -86,6 +91,7 @@ static ssize_t dev_read (struct file *filp, char __user *buffer, size_t len, lof
 	mutex_unlock(&dev->lock);
 
 	pr_info("Read and decrypted %zu bytes\n", bytes_read);
+	pr_info("Encrypted content: %s\n", original);
 	return bytes_read;
 }
 static ssize_t dev_write (struct file *filp, const char __user *buffer, size_t len, loff_t *offset)
@@ -130,22 +136,33 @@ static ssize_t dev_write (struct file *filp, const char __user *buffer, size_t l
 	return bytes_written;
 }
 
-static loff_t dev_llseek (struct file *filp, loff_t offset, int whence)
-{
-	pr_info("dev_llseek");
-	return 0;
-}
-
 static long dev_unlocked_ioctl (struct file *filp, unsigned int cmd, unsigned long arg)
 {
-	pr_info("dev_unlocked_ioctl");
+	struct xorbox_dev *dev = filp->private_data;
+	u8 new_key;
+
+	switch(cmd) {
+		case XORBOX_SET_KEY:
+			if (copy_from_user(&new_key, (u8 __user *)arg, sizeof(u8))) return -EFAULT;
+			if (mutex_lock_interruptible(&dev->lock)) return -ERESTARTSYS;
+
+			dev->key = new_key;
+			mutex_unlock(&dev->lock);
+		
+			pr_info("XOR key updated to: 0x%02X\n", dev->key);
+			break;
+
+		default:
+			pr_err("Invalid ioctl command: 0x%X\n", cmd);
+			return -ENOTTY; // inappropriate ioctl for device
+	}
+
 	return 0;
 }
 
 static long dev_compat_ioctl (struct file *filp, unsigned int cmd, unsigned long arg)
 {
-	pr_info("dev_compat_ioctl");
-	return 0;
+	return dev_unlocked_ioctl(filp, cmd, arg);
 }
 
 static struct file_operations fops = {
@@ -155,7 +172,7 @@ static struct file_operations fops = {
 	.write = dev_write,
 	.unlocked_ioctl = dev_unlocked_ioctl,
 	.compat_ioctl = dev_compat_ioctl,
-	.llseek = dev_llseek
+	.llseek = no_llseek,
 };
 
 static int __init xorbox_init(void)
@@ -171,11 +188,8 @@ static int __init xorbox_init(void)
 		return allocated_number;
 	}
 
-	pr_info("Number allocated\n");
-	pr_info("allocated_number: %d\n", allocated_number);
-	pr_info("dev_number: %u\n", dev_number);
-	pr_info("Major number: %d\n", MAJOR(dev_number));
-	pr_info("Minor number: %d\n", MINOR(dev_number));
+	pr_info("Number allocated: %d\n", allocated_number);
+	pr_info("dev_number: %u | major: %d | minor: %d\n", dev_number, MAJOR(dev_number), MINOR(dev_number));
 
 	cur_dev = kmalloc(sizeof(struct xorbox_dev), GFP_KERNEL);
 	if (!cur_dev)
