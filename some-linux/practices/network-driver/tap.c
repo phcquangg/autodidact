@@ -80,27 +80,26 @@ int main()
 			if (nread > 0)
 			{
 				printf("[tap0 -> Router] Captured %zd bytes\n", nread);
-				printf(" src MAC: %02x:%02x:%02x:%02x:%02x:%02x:%02x -> dest MAC: %02x:%02x:%02x:%02x:%02x:%02x | EtherType: 0x%02x%02x\n",
+				printf(" src MAC: %02x:%02x:%02x:%02x:%02x:%02x -> dest MAC: %02x:%02x:%02x:%02x:%02x:%02x | EtherType: 0x%02x%02x\n",
 						buffer[6], buffer[7], buffer[8], buffer[9], buffer[10], buffer[11],
 						buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5],
 						buffer[12], buffer[13]);
 			}
+		}
 
-			if (FD_ISSET(tap1_fd, &rd_set))
-			{
-				ssize_t nread = read(tap1_fd, buffer, sizeof(buffer));
+		if (FD_ISSET(tap1_fd, &rd_set))
+		{
+			ssize_t nread = read(tap1_fd, buffer, sizeof(buffer));
 				
-				if (nread > 0)
-				{
-					printf("[tap1 -> Router] Captured %zd bytes\n", nread);
-					printf("  Src MAC: %02x:%02x:%02x:%02x:%02x:%02x -> Dest MAC: %02x:%02x:%02x:%02x:%02x:%02x | EtherType: 0x%02x%02x\n",
-                       buffer[6], buffer[7], buffer[8], buffer[9], buffer[10], buffer[11],
-                       buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5],
-                       buffer[12], buffer[13]);
-				}
+			if (nread > 0)
+			{
+				printf("[tap1 -> Router] Captured %zd bytes\n", nread);
+				printf("  Src MAC: %02x:%02x:%02x:%02x:%02x:%02x -> Dest MAC: %02x:%02x:%02x:%02x:%02x:%02x | EtherType: 0x%02x%02x\n",
+                    buffer[6], buffer[7], buffer[8], buffer[9], buffer[10], buffer[11],
+                    buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5],
+                    buffer[12], buffer[13]);
 			}
 		}
-	}
 	
 	close(tap0_fd);
 	close(tap1_fd);
