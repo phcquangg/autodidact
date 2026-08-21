@@ -266,3 +266,26 @@ struct hostent {
 }
 #define h_addr h_addr_list[0];
 
+/**
+*	select(); 
+*		- monitor multiple sockets at the same time.
+*		- 
+*	macros:
+*		- FD_ZERO( fd_set *set)				- clear a fd set
+*		- FD_SET( int fd, fd_set *set)		- adds fd to the set
+*		- FD_CLR( int fd, fd_set *set)		- remove fd from set
+*		- FD_ISSET( int fd, fd_set *set)	- test to see if fd is in the set
+*/
+
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int select( int numfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+
+struct timeval {
+	int tv_sec;
+	int tv_usec;
+};
+
+
